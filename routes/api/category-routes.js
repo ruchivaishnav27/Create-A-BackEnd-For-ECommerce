@@ -4,7 +4,20 @@ const { Category, Product } = require('../../models');
 // The `/api/categories` endpoint
 
 router.get('/', (req, res) => {
-  Category.findAll()
+  console.log('======================');
+  Post.findAll({
+    attributes: [
+      'id',
+      'category_name',
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
+    ],
+    include: [
+      {
+        model: Category,
+        attributes: ['id', 'category_name', 'product_id'],
+     }
+    ]
+  })
     .then(dbCategoryData => res.json(dbCategoryData))
     .catch(err => {
       console.log(err);
@@ -20,12 +33,12 @@ router.get('/:id', (req, res) => {
     attributes: [
       'id',
       'category_name',
-     //[sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
     ],
     include: [
       {
         model: Category,
-        attributes: ['id', 'category_name']
+        attributes: ['id', 'category_name', 'product_id']
       }
     ]
   })

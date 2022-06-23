@@ -2,9 +2,24 @@ const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
-
 router.get('/', (req, res) => {
-  Product.findAll()
+  console.log('======================');
+  Product.findAll({
+    attributes: [
+      'id',
+      'product_name',
+      'price',
+      'stock',
+      'category_id'
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
+    ],
+    include: [
+      {
+        model: Product,
+        attributes: ['id', 'product_name', 'category_name', 'tag_id']
+     }
+    ]
+  })
     .then(dbProductData => res.json(dbProductData))
     .catch(err => {
       console.log(err);
@@ -23,13 +38,13 @@ router.get('/:id', (req, res) => {
       'price',
       'stock',
       'category_id'
-     //[sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
     ],
     include: [
       {
         model: Product,
-        attributes: ['id', 'product_name']
-      }
+        attributes: ['id', 'product_name', 'category_name', 'tag_id']
+     }
     ]
   })
     .then(dbProductData => {
@@ -42,8 +57,9 @@ router.get('/:id', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    });
+    })
 });
+
 
 // create new product
 router.post('/', (req, res) => {

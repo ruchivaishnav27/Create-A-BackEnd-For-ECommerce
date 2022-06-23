@@ -4,7 +4,20 @@ const { Tag, Product, ProductTag } = require('../../models');
 // The `/api/tags` endpoint
 
 router.get('/', (req, res) => {
-  Tag.findAll()
+  console.log('======================');
+  Tag.findAll({
+    attributes: [
+      'id',
+      'tag_name',
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
+    ],
+    include: [
+      {
+        model: Tag,
+        attributes: ['id', 'tag_name', 'product_id'],
+     }
+    ]
+  })
     .then(dbTagData => res.json(dbTagData))
     .catch(err => {
       console.log(err);
@@ -20,13 +33,13 @@ router.get('/:id', (req, res) => {
     attributes: [
       'id',
       'tag_name',
-     //[sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+      [sequelize.literal('(SELECT COUNT(*) FROM product WHERE product.id = category.product_id)'), 'product_count']
     ],
     include: [
       {
         model: Tag,
-        attributes: ['id', 'tag_name']
-      }
+        attributes: ['id', 'tag_name', 'product_id'],
+     }
     ]
   })
     .then(dbTagData => {
