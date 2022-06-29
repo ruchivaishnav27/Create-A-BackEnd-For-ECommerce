@@ -6,7 +6,7 @@ This application allows a company to build a backend for their e-commerce websit
 
 ## Installation
 
-To use this application, one must first install Express.js and Sequelize.  They can then follow along using this link: 
+To use this application, one must first install Express.js and Sequelize.  
 
 ## Usage
 
